@@ -1,10 +1,23 @@
  <h1>Tiny App</h1>
+ <% if (username){ %>
  <h2><%= username%></h2>
+ <form method="POST" action="/logout">
+   <div class="form-group mb-2">
+        <label for="logout" name = "logout"> </label>
+        <button type="submit" class="btn btn-primary">Logout</button>
+</div>
+ </form>
+<%} else {%>
  <form method="POST" action="/login">
    <div class="form-group mb-2">
-        <label for="name = username" name = "username" </label>
+        <label for="name = username" name = "username" > Username: </label>
         <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="login" class="btn btn-primary">Login</button>
+      </div>
  </form>
- <a href="Create my new tiny URL!">
+ <%}%>
+</b>
+</b>
+
+
 
