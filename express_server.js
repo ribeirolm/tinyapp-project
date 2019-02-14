@@ -70,22 +70,17 @@ app.get("/hello", (req, res) => {
 //To render the url index page to view all urls
 app.get("/urls", (req, res) => {
   let templateVars = {user : req.cookies["user_id"], urls : urlDatabase};
-  // TEST FOR TEMPLATEVARS BEING SENT TO PAGES
-  // console.log(templateVars);
-   // urls : urlDatabase, username: req.cookies["username"]};
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {user : req.cookies["user_id"], urls : urlDatabase};
-  // {urls : urlDatabase, username: req.cookies["username"]};
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {user : req.cookies["user_id"], shortURL : req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
-  // {shortURL : req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
@@ -104,7 +99,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {email : req.params.email, password: req.params.password};
-  // {email : req.params.email, password: req.params.password};
   res.render("app_register", templateVars);
 });
 
@@ -145,7 +139,6 @@ app.post("/register", (req, res) => {
 //User should be directed to the login page
 app.get("/login", (req, res) => {
   let templateVars = {email : req.params.email, password: req.params.password};
-  // {email : req.params.email, password: req.params.password};
   res.render("app_login", templateVars);
 });
 
