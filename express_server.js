@@ -28,7 +28,6 @@ const users = {
 }
 
 
-
 function generateRandomString() {
   var randomString = "";
   var possibleChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -43,7 +42,7 @@ function emailLookup(email){
   for(var user in users){
     var user_email = users[user].email;
     if (user_email === email) {
-      return true;
+      return users[user];
     }
   }
 }
@@ -143,6 +142,26 @@ app.post("/register", (req, res) => {
   }
 });
 
+//User should be directed to the login page
+app.get("/login", (req, res) => {
+  let templateVars = {email : req.params.email, password: req.params.password};
+  // {email : req.params.email, password: req.params.password};
+  res.render("app_login", templateVars);
+});
+
+//After selecting login, the user should be redirected to the urls page if their email and password match an existing user
+app.post("/login", (req, res) => {
+  var currentUser = emailLookup(req.body.email);
+  if (!currentUser) {
+    res.status(403).send('No account was found matching this information.');
+  } else {
+    if (req.body.password === currentUser.password) {
+      res.redirect("/urls");
+    } else {
+      res.status(403).send('No account was found matching this information.');
+    }
+  }
+});
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   var shortURL = req.params.shortURL;
