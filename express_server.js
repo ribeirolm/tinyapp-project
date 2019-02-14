@@ -126,7 +126,7 @@ app.post("/register", (req, res) => {
 
   if (req.body.email === "" || req.body.password === ""){
     res.status(400).send('You forgot to input an email or a password!');
-  } else if (emailLookup(req.body.email)=== true) {
+  } else if (emailLookup(req.body.email)) {
     res.status(400).send('This email address is already registered.');
   } else {
     var user_id = generateRandomString();
