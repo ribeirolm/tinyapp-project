@@ -11,6 +11,7 @@
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <%include ./partials/_header %>
+   <a href= '/urls/new'> Create tiny URL </a>
     <ul>
       <% for(var shortURL in urls){ %>
       <li> <a href='<%= urls[shortURL]%>'><%= shortURL%> - <%= urls[shortURL]%></a> </li>
