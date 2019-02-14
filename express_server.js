@@ -76,7 +76,11 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {user : req.cookies["user_id"], urls : urlDatabase};
-  res.render("urls_new", templateVars);
+  if (templateVars.user) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.render("app_login", templateVars);
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
