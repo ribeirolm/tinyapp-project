@@ -156,6 +156,7 @@ app.post("/login", (req, res) => {
     res.status(403).send('No account was found matching this information.');
   } else {
     if (req.body.password === currentUser.password) {
+      res.cookie("user_id", currentUser);
       res.redirect("/urls");
     } else {
       res.status(403).send('No account was found matching this information.');
@@ -173,11 +174,6 @@ app.post("/urls/:shortURL/update", (req, res) => {
   var shortURL = req.params.shortURL;
   var updatedLongURL = req.body.longURL;
   urlDatabase[shortURL] = updatedLongURL;
-  res.redirect("/urls");
-});
-
-app.post("/login", (req, res) => {
-  res.cookie("user_id", req.body.user_id);
   res.redirect("/urls");
 });
 
