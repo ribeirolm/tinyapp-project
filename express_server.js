@@ -91,6 +91,16 @@ app.get("/register", (req, res) => {
   res.render("app_register", templateVars);
 });
 
+
+app.post("/register", (req, res) => {
+  var user_id = generateRandomString();
+  users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
+  res.cookie("user_id", user_id);
+  console.log(users);
+  res.redirect("/urls");
+});
+
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   var shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
