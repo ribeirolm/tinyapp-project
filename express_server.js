@@ -26,23 +26,28 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+//To send "Hello!" to browser
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-
+//To turn response to JSON format
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+
+//To send "Hello World" to browser
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//To render the url index page to view all urls
 app.get("/urls", (req, res) => {
   let templateVars = {urls : urlDatabase, username: req.cookies["username"]};
   res.render("urls_index", templateVars);
 });
+
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {urls : urlDatabase, username: req.cookies["username"]};
@@ -65,6 +70,11 @@ app.get("/u/:shortURL", (req, res) => {
   var shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {
+  let templateVars = {email : req.params.email, password: req.params.password};
+  res.render("app_register", templateVars);
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
