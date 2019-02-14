@@ -36,6 +36,16 @@ function generateRandomString() {
   return(randomString);
 }
 
+
+function emailLookup(email){
+  for(var user in users){
+    var user_email = users[user].email;
+    if (user_email === email) {
+      return true;
+    }
+  }
+}
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -93,11 +103,33 @@ app.get("/register", (req, res) => {
 
 
 app.post("/register", (req, res) => {
-  var user_id = generateRandomString();
-  users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
-  res.cookie("user_id", user_id);
-  console.log(users);
-  res.redirect("/urls");
+  // switch(){
+  //   case emailLookup(req.body.email)=== true:
+  //     res.status(400).send('This email address is already registered.');
+  //     break;
+  //   case req.body.email === "":
+  //     res.status(400).send('You forgot to input an email!');
+  //     break;
+  //   case req.body.password === "";
+  //     res.status(400).send('You forgot to input a password!');
+  //     break;
+  //   default:
+  //     var user_id = generateRandomString();
+  //     users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
+  //     res.cookie("user_id", user_id);
+  //     res.redirect("/urls");
+  // };
+
+  if (req.body.email === "" || req.body.password === ""){
+    res.status(400).send('You forgot to input an email or a password!');
+  } else if (emailLookup(req.body.email)=== true) {
+    res.status(400).send('This email address is already registered.');
+  } else {
+    var user_id = generateRandomString();
+      users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
+      res.cookie("user_id", user_id);
+      res.redirect("/urls");
+  }
 });
 
 
@@ -106,7 +138,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[shortURL];
   res.redirect("/urls");
 });
-
 
 app.post("/urls/:shortURL/update", (req, res) => {
   var shortURL = req.params.shortURL;
