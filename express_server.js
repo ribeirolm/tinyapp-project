@@ -1,10 +1,12 @@
-var express = require("express");
-var cookieParser = require("cookie-parser");
-var app = express();
-var PORT = 8080; // default port 8080
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const app = express();
+const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+// const bcrypt = require ("bcrypt");
+
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieParser('The dog barks loudly when no one is listening'));
 app.set("view engine", "ejs")
 
 var urlDatabase = {
@@ -68,18 +70,23 @@ app.get("/hello", (req, res) => {
 
 //To render the url index page to view all urls
 app.get("/urls", (req, res) => {
-  let templateVars = {urls : urlDatabase, username: req.cookies["username"]};
+  let templateVars = {user : req.cookies["user_id"], urls : urlDatabase};
+  // TEST FOR TEMPLATEVARS BEING SENT TO PAGES
+  // console.log(templateVars);
+   // urls : urlDatabase, username: req.cookies["username"]};
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = {urls : urlDatabase, username: req.cookies["username"]};
+  let templateVars = {user : req.cookies["user_id"], urls : urlDatabase};
+  // {urls : urlDatabase, username: req.cookies["username"]};
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = {shortURL : req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
+  let templateVars = {user : req.cookies["user_id"], shortURL : req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  // {shortURL : req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
@@ -98,6 +105,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {email : req.params.email, password: req.params.password};
+  // {email : req.params.email, password: req.params.password};
   res.render("app_register", templateVars);
 });
 
@@ -113,6 +121,9 @@ app.post("/register", (req, res) => {
   //   case req.body.password === "";
   //     res.status(400).send('You forgot to input a password!');
   //     break;
+//     case req.body.password === "" && req.body.email === "";
+  //     res.status(400).send('You forgot to input an email and password!');
+  //     break;
   //   default:
   //     var user_id = generateRandomString();
   //     users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
@@ -127,7 +138,7 @@ app.post("/register", (req, res) => {
   } else {
     var user_id = generateRandomString();
       users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
-      res.cookie("user_id", user_id);
+      res.cookie("user_id", users[user_id]);
       res.redirect("/urls");
   }
 });
@@ -147,11 +158,11 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  res.cookie("user_id", req.body.user_id);
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });

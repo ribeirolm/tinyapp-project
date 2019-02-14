@@ -1,6 +1,6 @@
  <h1>Tiny App</h1>
- <% if (username){ %>
- <h2><%= username%></h2>
+ <% if (user){ %>
+ <h2><%= user.email%></h2>
  <form method="POST" action="/logout">
    <div class="form-group mb-2">
         <label for="logout" name = "logout"> </label>
@@ -10,8 +10,8 @@
 <%} else {%>
  <form method="POST" action="/login">
    <div class="form-group mb-2">
-        <label for="name = username" name = "username" > Username: </label>
-        <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
+        <label for="name = username" name = "users[user_id].email" > User email: </label>
+        <input class="form-control" type="text" name="users[user_id].email" placeholder="User Email" style="width: 300px; margin: 1em">
         <button type="login" class="btn btn-primary">Login</button>
       </div>
  </form>
