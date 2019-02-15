@@ -13,12 +13,16 @@
     <%include ./partials/_header %>
    <a href= '/urls/new'> Create tiny URL </a>
     <ul>
-      <% for(var shortURL in urls){ %>
-      <li> <a href='<%= urls[shortURL]%>'><%= shortURL%> - <%= urls[shortURL].longURL%></a> </li>
-      <form method="POST" action="/urls/<%=shortURL%>/delete">
-        <a href= '/urls/<%= shortURL%>'> Edit </a>
-        <button type="submit" class="btn btn-primary"> Delete </button>
-      </form>
+      <% if (user){%>
+        <% for(var shortURL in userUrls){ %>
+        <li> <a href='<%= userUrls[shortURL]%>'><%=userUrls[shortURL]%> - <%=userUrls[shortURL].longURL%> </a> </li>
+        <form method="POST" action="/urls/<%=shortURL%>/delete">
+          <a href= '/urls/<%= shortURL%>'> Edit </a>
+          <button type="submit" class="btn btn-primary"> Delete </button>
+        </form>
+            <%}%>
+      <%} else{%>
+        <p>You must login or register to see URLS</p>
       <%};%>
     </ul>
 

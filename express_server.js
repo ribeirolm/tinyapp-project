@@ -10,8 +10,8 @@ app.use(cookieParser('The dog barks loudly when no one is listening'));
 app.set("view engine", "ejs")
 
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  "b6UTxQ": { longURL: "https://www.tsn.ca", userID: "userRandomID" },
+  "i3BoGr": { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = {
@@ -26,16 +26,6 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-
-// //To add a userID to the URL database:
-// function addUserIDtoShortURL(shortURL){
-//   for (var shortURL in urlDatabase){
-//   urlDatabase[shortURL].userID = users["userRandomID"].id;
-//   };
-// }
-// addUserIDtoShortURL("testing");
-// console.log(urlDatabase)
-
 
 function generateRandomString() {
   var randomString = "";
@@ -54,6 +44,17 @@ function emailLookup(email){
       return users[user];
     }
   }
+}
+
+function urlsForUser(id){
+  var userURLs = {};
+  for (var shortURL in urlDatabase) {
+    var userID = urlDatabase[shortURL].userID;
+    if (userID === id) {
+      userURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userURLs;
 }
 
 app.listen(PORT, () => {
@@ -80,11 +81,20 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     user : req.cookies["user_id"],
-    urls : urlDatabase
+    userUrls : urlsForUser(req.cookies["user_id"]),
   };
-  res.render("urls_index", templateVars);
+    res.render("urls_index", templateVars);
 });
 
+app.post("/urls", (req, res) => {
+  var shortURL = generateRandomString();
+  urlDatabase[shortURL] = {longURL: req.body.longURL, userID:req.cookies["user_id"]}
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login")
+  } else{
+  res.redirect("/urls");
+  }
+});
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
@@ -107,12 +117,26 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  var shortURL = generateRandomString();
-  var longURL = req.body.longURL;
-  urlDatabase[shortURL].longURL = longURL;
-  urlDatabase[shortURL].userID = req.cookies["user_id"];
-  res.redirect("/urls");
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  var shortURL = req.params.shortURL;
+  if (req.cookies["user_id"] === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("You are not the creator of this short URL therefore, you are unable to delete it!")
+  }
+
+});
+
+app.post("/urls/:shortURL/update", (req, res) => {
+  var shortURL = req.params.shortURL;
+  if (req.cookies["user_id"] === urlDatabase[shortURL].userID) {
+    urlDatabase[shortURL].longURL = req.body.longURL;
+    res.redirect("/urls");
+  } else{
+    res.status(403).send("You are not the creator of this short URL therefore, you are unable to edit it!")
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -183,27 +207,12 @@ app.post("/login", (req, res) => {
     res.status(403).send('No account was found matching this information.');
   } else {
     if (req.body.password === currentUser.password) {
-      res.cookie("user_id", currentUser);
+      res.cookie("user_id", currentUser.id);
       res.redirect("/urls");
     } else {
       res.status(403).send('No account was found matching this information.');
     }
   }
-});
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  var shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
-});
-
-app.post("/urls/:shortURL/update", (req, res) => {
-  var shortURL = req.params.shortURL;
-  urlDatabase[shortURL].longURL = req.body.longURL;
-
-  console.log(urlDatabase);
-
-  res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
