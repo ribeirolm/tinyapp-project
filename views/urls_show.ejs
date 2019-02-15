@@ -12,7 +12,7 @@
     <!-- Add EJS code here -->
     <% include ./partials/_header %>
     <ul>
-      <li> <a href='#'><%= shortURL%> - <%= longURL%></a> </li>
+      <li> <a href='/u/<%=shortURL%>'><%= shortURL%> - <%= longURL%></a> </li>
           <form method="POST" action="/urls/<%=shortURL%>/update">
             <div class="form-group mb-2">
             <label for="longURL">Enter a new URL:</label>

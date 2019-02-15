@@ -1,12 +1,18 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser('The dog barks loudly when no one is listening'));
+app.use(cookieSession({
+  name: 'session',
+  keys: ['01234567'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 app.set("view engine", "ejs")
 
 const urlDatabase = {
@@ -61,10 +67,10 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-//To send "Hello!" to browser
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+// //To send "Hello!" to browser
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
 
 //To turn response to JSON format
 app.get("/urls.json", (req, res) => {
@@ -72,24 +78,24 @@ app.get("/urls.json", (req, res) => {
 });
 
 
-//To send "Hello World" to browser
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// //To send "Hello World" to browser
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 //To render the url index page to view all urls
 app.get("/urls", (req, res) => {
   let templateVars = {
-    user : req.cookies["user_id"],
-    userUrls : urlsForUser(req.cookies["user_id"]),
+    user : req.session.user_id,
+    userUrls : urlsForUser(req.session.user_id),
   };
     res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   var shortURL = generateRandomString();
-  urlDatabase[shortURL] = {longURL: req.body.longURL, userID:req.cookies["user_id"]}
-  if (!req.cookies["user_id"]) {
+  urlDatabase[shortURL] = {longURL: req.body.longURL, userID:req.session.user_id}
+  if (!req.session.user_id) {
     res.redirect("/login")
   } else{
   res.redirect("/urls");
@@ -98,7 +104,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    user : req.cookies["user_id"],
+    user : req.session.user_id,
     urls : urlDatabase
   };
   if (templateVars.user) {
@@ -110,7 +116,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
-    user : req.cookies["user_id"],
+    user : req.session.user_id,
     shortURL : req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL
   };
@@ -120,7 +126,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   var shortURL = req.params.shortURL;
-  if (req.cookies["user_id"] === urlDatabase[shortURL].userID) {
+  if (req.session.user_id === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   } else {
@@ -131,7 +137,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL/update", (req, res) => {
   var shortURL = req.params.shortURL;
-  if (req.cookies["user_id"] === urlDatabase[shortURL].userID) {
+  if (req.session.user_id === urlDatabase[shortURL].userID) {
     urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
   } else{
@@ -141,7 +147,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   var shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL].longURL;
+  var longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -171,7 +177,7 @@ app.post("/register", (req, res) => {
   //   default:
   //     var user_id = generateRandomString();
   //     users[user_id] = {id: user_id, email: req.body.email, password: req.body.password};
-  //     res.cookie("user_id", user_id);
+  //     res.end(req.session["user_id", user_id]);
   //     res.redirect("/urls");
   // };
 
@@ -189,7 +195,7 @@ app.post("/register", (req, res) => {
         email: email,
         password: hashedPassword
       };
-      res.cookie("user_id", users[user_id].id);
+      req.session.user_id = users[user_id].id;
       res.redirect("/urls");
   }
 });
@@ -210,7 +216,7 @@ app.post("/login", (req, res) => {
     res.status(403).send('No account was found matching this information.');
   } else {
     if (bcrypt.compareSync(req.body.password, currentUser.password) === true) {
-      res.cookie("user_id", currentUser.id);
+      req.session.user_id = currentUser.id;
       res.redirect("/urls");
     } else {
       res.status(403).send('No account was found matching this information.');
@@ -219,6 +225,6 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  res.clearCookie("session");
   res.redirect("/urls");
 });
