@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-// const bcrypt = require ("bcrypt");
+const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser('The dog barks loudly when no one is listening'));
@@ -124,7 +124,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   } else {
-    res.status(403).send("You are not the creator of this short URL therefore, you are unable to delete it!")
+    res.redirect("/login");
   }
 
 });
@@ -148,7 +148,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {
     email : req.params.email,
-    password: req.params.password
+    password: req.params.password,
   };
   res.render("app_register", templateVars);
 });
@@ -181,12 +181,15 @@ app.post("/register", (req, res) => {
     res.status(400).send('This email address is already registered.');
   } else {
     var user_id = generateRandomString();
+    const email = req.body.email;
+    const password = req.body.password;
+    const hashedPassword = bcrypt.hashSync(password, 10);
       users[user_id] = {
         id: user_id,
-        email: req.body.email,
-        password: req.body.password
+        email: email,
+        password: hashedPassword
       };
-      res.cookie("user_id", users[user_id]);
+      res.cookie("user_id", users[user_id].id);
       res.redirect("/urls");
   }
 });
@@ -206,7 +209,7 @@ app.post("/login", (req, res) => {
   if (!currentUser) {
     res.status(403).send('No account was found matching this information.');
   } else {
-    if (req.body.password === currentUser.password) {
+    if (bcrypt.compareSync(req.body.password, currentUser.password) === true) {
       res.cookie("user_id", currentUser.id);
       res.redirect("/urls");
     } else {
