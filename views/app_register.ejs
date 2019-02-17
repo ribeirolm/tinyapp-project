@@ -9,19 +9,25 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
   <h1>Tiny App</h1>
-    <a href= '/login'> Login </a>
-   <h2>Create Account</h2>
-   <form method="POST" action="/register">
-            <div class="form-group mb-2">
-            <label for="email">Enter an email:</label>
-            <input class="form-control" type="email" name="email" placeholder="johndoe@email.com" style="width: 300px; margin: 1em">
-            <label for="password">Enter a password:</label>
-            <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px; margin: 1em">
-            <button type="submit" class="btn btn-primary">Register</button>
-            </div>
-    </form>
+   <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/urls">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Register</li>
+      </ol>
+   </nav>
+     <h2>Create Account</h2>
+     <form method="POST" action="/register">
+              <div class="form-group mb-2">
+              <label for="email">Enter an email:</label>
+              <input class="form-control" type="email" name="email" placeholder="johndoe@email.com" style="width: 300px; margin: 1em">
+              <label for="password">Enter a password:</label>
+              <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px; margin: 1em">
+              <button type="submit" class="btn btn-primary">Register</button>
+              </div>
+      </form>
+    <p>Already have an account? <a href= '/login'> Login </a></p>
+
 
 </body>
 </html>

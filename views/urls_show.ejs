@@ -9,10 +9,16 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
+    <h1>Tiny App</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/urls">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tiny URL</li>
+      </ol>
+    </nav>
     <% include ./partials/_header %>
-    <ul>
-      <li> <a href='/u/<%=shortURL%>'><%= shortURL%> - <%= longURL%></a> </li>
+    <h3>Tiny URL: /u/<%= shortURL%></h3>
+      <a href='/u/<%=shortURL%>'><%= shortURL%> - <%= longURL%></a>
           <form method="POST" action="/urls/<%=shortURL%>/update">
             <div class="form-group mb-2">
             <label for="longURL">Enter a new URL:</label>
@@ -20,7 +26,6 @@
             <button type="submit" class="btn btn-primary">Update</button>
             </div>
           </form>
-    </ul>
 
 
 </body>

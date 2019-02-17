@@ -10,8 +10,12 @@
 </head>
 <body style="font-size:20px; padding:50px;">
     <h1>Tiny App</h1>
-    <!-- Add EJS code here -->
-   <a href= '/register'> Register </a>
+     <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/urls">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Login</li>
+      </ol>
+     </nav>
    <h2>Login</h2>
    <form method="POST" action="/login">
             <div class="form-group mb-2">
@@ -22,6 +26,7 @@
             <button type="submit" class="btn btn-primary">Login</button>
             </div>
     </form>
+     <p>Don't have an account? <a href= '/register'> Register </a>
 
 </body>
 </html>

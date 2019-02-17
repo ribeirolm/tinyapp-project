@@ -9,11 +9,18 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
-    <%include ./partials/_header %>
-   <a href= '/urls/new'> Create tiny URL </a>
+   <h1>Tiny App</h1>
+   <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page">Home</li>
+      </ol>
+   </nav>
+  <%include ./partials/_header %>
+
+  <% if (user){%>
+  <a href= '/urls/new'> Create tiny URL </a>
+  <h3>My Tiny URLs:</h3>
     <ul>
-      <% if (user){%>
         <% for(var shortURL in userUrls){ %>
         <li> <a href='/urls/<%= shortURL%>'> <%= shortURL%> - <%= userUrls[shortURL].longURL%> </a> </li>
         <form method="POST" action="/urls/<%=shortURL%>/delete">
@@ -22,7 +29,12 @@
         </form>
             <%}%>
       <%} else{%>
-        <p>You must login or register to see URLS</p>
+        <div class="jumbotron">
+        <h1 class="display-4">Welcome!</h1>
+        <p class="lead">Tiny App is a web application designed to take your long URLs and shorten them to make it easier to share content.</p>
+        <hr class="my-4">
+        <p>You must login or register to see your teeny tiny URLs.</p>
+      </div>
       <%};%>
     </ul>
 
